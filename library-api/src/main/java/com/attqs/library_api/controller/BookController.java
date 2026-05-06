@@ -37,6 +37,16 @@ public class BookController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/search/title")
+    public List<Book> searchByTitle(@RequestParam String title) {
+        return bookService.searchByTitle(title);
+    }
+
+    @GetMapping("/search/author")
+    public List<Book> searchByAuthor(@RequestParam String author) {
+        return bookService.searchByAuthor(author);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Book> updateBook(@PathVariable String id, @Valid @RequestBody Book bookDetails) {
         try {

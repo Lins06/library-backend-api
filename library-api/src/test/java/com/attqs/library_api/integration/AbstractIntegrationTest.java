@@ -11,10 +11,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class AbstractIntegrationTest {
 
-    static {
-        System.setProperty("DOCKER_HOST", "npipe:////./pipe/docker_engine");
-    }
-
     @Container
     static final MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:6.0.5");
 

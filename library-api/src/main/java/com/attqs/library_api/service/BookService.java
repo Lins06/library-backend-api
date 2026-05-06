@@ -29,6 +29,14 @@ public class BookService {
         return bookRepository.findById(id);
     }
 
+    public List<Book> searchByTitle(String title) {
+        return bookRepository.findByTitleContainingIgnoreCase(title);
+    }
+
+    public List<Book> searchByAuthor(String author) {
+        return bookRepository.findByAuthorContainingIgnoreCase(author);
+    }
+
     public Book updateBook(String id, Book bookDetails) {
         return bookRepository.findById(id).map(book -> {
             book.setTitle(bookDetails.getTitle());
