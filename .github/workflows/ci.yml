@@ -9,10 +9,7 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: library-api # Diz para o GitHub rodar os comandos Maven dentro da pasta certa
-
+    
     services:
       mongodb:
         image: mongo:6.0
@@ -54,7 +51,7 @@ jobs:
       run: mvn package -DskipTests
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4 # Atualizado para v4
       with:
         files: ./library-api/target/site/jacoco/jacoco.xml
         flags: unittests
@@ -62,7 +59,7 @@ jobs:
         fail_ci_if_error: false
 
     - name: Upload build artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4 # Atualizado para v4 (Corrige o erro de falha automática)
       with:
         name: library-api-jar
         path: library-api/target/library-api-*.jar
@@ -164,7 +161,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Download build artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4 # Atualizado para v4 para conversar com o upload
       with:
         name: library-api-jar
         path: library-api/target/
