@@ -41,4 +41,15 @@ public class User {
 
     @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
+
+    // Endereço
+    private String cep;
+
+    private String street;
+
+    private String neighborhood;
+
+    private String city;
+
+    private String state;
 }

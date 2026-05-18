@@ -28,4 +28,6 @@ public class RegisterRequestDTO {
 
     @NotBlank(message = "A confirmação de senha é obrigatória")
     private String confirmPassword;
+
+    private String cep;
 }

@@ -1,8 +1,10 @@
 package com.attqs.library_api.controller;
 
+import com.attqs.library_api.dto.AddressResponseDTO;
 import com.attqs.library_api.dto.LoginRequestDTO;
 import com.attqs.library_api.dto.LoginResponseDTO;
 import com.attqs.library_api.dto.RegisterRequestDTO;
+import com.attqs.library_api.service.AddressService;
 import com.attqs.library_api.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -15,9 +17,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final AddressService addressService;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, AddressService addressService) {
         this.userService = userService;
+        this.addressService = addressService;
     }
 
     @PostMapping("/register")
@@ -36,5 +40,10 @@ public class AuthController {
     @GetMapping("/validate")
     public ResponseEntity<String> validate() {
         return ResponseEntity.ok("Autenticação válida");
+    }
+
+    @GetMapping("/address/{cep}")
+    public ResponseEntity<AddressResponseDTO> searchByCep(@PathVariable String cep) {
+        return ResponseEntity.ok(addressService.findAddressByCep(cep));
     }
 }
