@@ -70,6 +70,8 @@ jobs:
   sonarqube:
     needs: build-and-test
     runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     defaults:
       run:
         working-directory: library-api
@@ -99,7 +101,7 @@ jobs:
         SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/library_test
 
     - name: SonarQube Scan
-      if: ${{ secrets.SONAR_TOKEN != '' }}
+      if: ${{ env.SONAR_TOKEN != '' }}
       uses: SonarSource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
