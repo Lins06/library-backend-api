@@ -9,7 +9,10 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    
+    defaults:
+      run:
+        working-directory: library-api # Diz para o GitHub rodar os comandos Maven dentro da pasta certa
+
     services:
       mongodb:
         image: mongo:6.0
@@ -53,7 +56,7 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
-        files: ./target/site/jacoco/jacoco.xml
+        files: ./library-api/target/site/jacoco/jacoco.xml
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
@@ -62,11 +65,14 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: library-api-jar
-        path: target/library-api-*.jar
+        path: library-api/target/library-api-*.jar
 
   sonarqube:
     needs: build-and-test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: library-api
     
     services:
       mongodb:
@@ -93,7 +99,6 @@ jobs:
         SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/library_test
 
     - name: SonarQube Scan
-      # AJUSTE 1: Validação correta se o Token do Sonar realmente existe antes de rodar
       if: ${{ secrets.SONAR_TOKEN != '' }}
       uses: SonarSource/sonarcloud-github-action@master
       env:
@@ -103,6 +108,9 @@ jobs:
   integration-tests:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    defaults:
+      run:
+        working-directory: library-api
     
     steps:
     - name: Checkout code
@@ -125,6 +133,9 @@ jobs:
 
   security-check:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: library-api
     
     steps:
     - name: Checkout code
@@ -144,23 +155,21 @@ jobs:
   quality-gate:
     needs: [ build-and-test, sonarqube, integration-tests ]
     runs-on: ubuntu-latest
-    # AJUSTE 2: Garante que o Quality Gate rode mesmo se os testes de integração forem pulados (na develop)
     if: always() && (needs.build-and-test.result == 'success')
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # AJUSTE 3: Baixa o JAR que já foi criado no primeiro passo (Economiza muito tempo!)
     - name: Download build artifact
       uses: actions/download-artifact@v3
       with:
         name: library-api-jar
-        path: target/
+        path: library-api/target/
 
     - name: Check build success
       run: |
-        if [ ! -f target/library-api-*.jar ]; then
+        if [ ! -f library-api/target/library-api-*.jar ]; then
           echo "Build artifact not found!"
           exit 1
         fi
