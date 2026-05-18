@@ -27,4 +27,8 @@ public class BookRequestDTO {
     private Integer publicationYear;
 
     private String isbn;
+
+    private String coverImageUrl;
+
+    private String description;
 }

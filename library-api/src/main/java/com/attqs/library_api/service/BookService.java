@@ -12,7 +12,6 @@ public class BookService {
 
     private final BookRepository bookRepository;
 
-
     public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
@@ -44,6 +43,11 @@ public class BookService {
             book.setGenre(bookDetails.getGenre());
             book.setPublicationYear(bookDetails.getPublicationYear());
             book.setIsbn(bookDetails.getIsbn());
+            
+            // CORREÇÃO: Salvando a imagem e a descrição que estavam faltando no update!
+            book.setCoverImageUrl(bookDetails.getCoverImageUrl());
+            book.setDescription(bookDetails.getDescription());
+            
             return bookRepository.save(book);
         }).orElseThrow(() -> new RuntimeException("Livro não encontrado com o id: " + id));
     }
