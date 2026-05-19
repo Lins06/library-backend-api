@@ -189,7 +189,10 @@ class AuthControllerTest {
         mockMvc.perform(get("/api/auth/address/12345-678"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.cep").value("12345-678"))
-                .andExpect(jsonPath("$.localidade").value("São Paulo"));
+                .andExpect(jsonPath("$.localidade").value("São Paulo"))
+                .andExpect(jsonPath("$.logradouro").value("Rua Principal"))
+                .andExpect(jsonPath("$.bairro").value("Centro"))
+                .andExpect(jsonPath("$.uf").value("SP"));
 
         verify(addressService, times(1)).findAddressByCep("12345-678");
     }
