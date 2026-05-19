@@ -109,7 +109,7 @@
     <build>
         <plugins>
 
-            <!-- Surefire com configuração para pular testes de integração -->
+            <!-- Surefire Plugin - Execução de Testes -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -119,6 +119,8 @@
                         <exclude>**/*IntegrationTest.java</exclude>
                         <exclude>**/integration/**</exclude>
                     </excludes>
+                    <!-- Integração com JaCoCo -->
+                    <argLine>${jacoco.agent.argLine}</argLine>
                 </configuration>
             </plugin>
 
@@ -128,23 +130,72 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <!-- JaCoCo -->
+            <!-- JaCoCo - Code Coverage Analysis -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.11</version>
                 <executions>
+                    <!-- Prepara o agente JaCoCo para coleta de dados -->
                     <execution>
+                        <id>jacoco-prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                        <configuration>
+                            <destFile>${project.build.directory}/jacoco.exec</destFile>
+                            <propertyName>jacoco.agent.argLine</propertyName>
+                        </configuration>
                     </execution>
+
+                    <!-- Gera relatório de cobertura em formato HTML e XML -->
                     <execution>
-                        <id>report</id>
+                        <id>jacoco-report</id>
                         <phase>test</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+                        </configuration>
+                    </execution>
+
+                    <!-- Verifica os limites de cobertura e falha o build se não atingir -->
+                    <execution>
+                        <id>jacoco-check</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+                            <rules>
+                                <!-- Regra Geral de 80% para Código Coberto -->
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                            <excludes>
+                                <exclude>**/dto/**</exclude>
+                                <exclude>**/model/**</exclude>
+                                <exclude>**/exception/**</exclude>
+                                <exclude>**/config/**</exclude>
+                                <exclude>**/*Application.*</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
